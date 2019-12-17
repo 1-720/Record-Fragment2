@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.recordfragment.InputActivity;
 import com.example.recordfragment.R;
+import com.example.recordfragment.UpdateActivity;
 import com.example.recordfragment.data.DatabaseHandler;
 import com.example.recordfragment.model.Record;
 
@@ -159,7 +160,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     private void editRecord(Record record) {
         // エディットボタンを押すと、inputActivityの方へと遷移する
-        Intent intent = new Intent(context, InputActivity.class);
+        // TODO: 遷移先をInputActivityでなく、UpdateActivityにする
+        Intent intent = new Intent(context, UpdateActivity.class);
         // インテントに遷移元の情報をもたせる
         intent.putExtra("from", "RecyclerViewAdapter");
         // ID, タイトル、時間、コメント、追加日時
