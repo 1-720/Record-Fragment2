@@ -90,9 +90,13 @@ public class UpdateActivity extends AppCompatActivity {
                     record.setRecordedTime(newTime);
                     record.setRecordComment(newComment);
 
+                    // intentから受け取ったid, dateをセット
+                    record.setId(Integer.parseInt(intent.getStringExtra("id")));
+                    record.setDateRecordAdded(intent.getStringExtra("date"));
+
                     // 保存
                     db = new DatabaseHandler(UpdateActivity.this);
-                    db.addRecord(record);
+                    db.updateRecord(record);
 
                     Intent intent = new Intent(UpdateActivity.this, MainActivity.class);
                     intent.putExtra("from", "input");

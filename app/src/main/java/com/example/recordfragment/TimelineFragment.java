@@ -4,8 +4,10 @@ package com.example.recordfragment;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -66,5 +68,30 @@ public class TimelineFragment extends Fragment {
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerViewAdapter.notifyDataSetChanged();
+
+        ItemTouchHelper helper = new ItemTouchHelper(
+                new ItemTouchHelper.SimpleCallback(0,
+                        ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+                    @Override
+                    public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                        return false;
+                    }
+
+                    @Override
+                    public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+
+                        int position = viewHolder.getAdapterPosition();
+                        Record record = recyclerViewAdapter.getRecordPosition(position);
+                        DatabaseHandler db = new DatabaseHandler(context);
+                        // SQLiteからデータを削除する
+                        db.deleteRecord(record.getId());
+                        // 表示（リスト）から削除する
+                        recordList.remove(position);
+                        recyclerViewAdapter.notifyItemRemoved(position);
+
+                    }
+                }
+        );
+        helper.attachToRecyclerView(recyclerView);
     }
 }

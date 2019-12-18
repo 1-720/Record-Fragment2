@@ -55,7 +55,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         db.insert(Constants.TABLE_NAME, null, values);
 
-        Log.d("xxx", "addRecord: " + values.toString());
+        db.close();
     }
 
     // 全てのレコードを取得する
@@ -93,6 +93,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
+        db.close();
+
         return recordList;
     }
 
@@ -105,7 +107,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // レコードのアップデート
-    public int updateRecord(Record record) {
+    public void updateRecord(Record record) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -114,7 +116,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(Constants.KEY_COMMENT, record.getRecordComment());
         values.put(Constants.KEY_DATE_ADDED, record.getDateRecordAdded());
 
-        return db.update(Constants.TABLE_NAME, values, Constants.KEY_ID + "=?",
+        db.update(Constants.TABLE_NAME, values, Constants.KEY_ID + "=?",
                 new String[]{String.valueOf(record.getId())});
+
+        db.close();
     }
 }

@@ -49,8 +49,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         Record record = recordList.get(position);
 
+        // リサイクラービューのカードの情報（タイトル、時間、コメント、日付）を書き込む
+        // タイトル
         holder.recordTitle.setText(record.getRecordTitle());
-        holder.recordedTime.setText(record.getRecordedTime());
+        // 時間
+        int time = Integer.parseInt(record.getRecordedTime());
+        int hour = time / 60;
+        int minute = time % 60;
+        holder.recordedTime.setText(hour + "時間" + minute + "分");
+        // コメント
         holder.recordComment.setText(record.getRecordComment());
 
         // unix time を読めるよう変換する
@@ -160,10 +167,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     private void editRecord(Record record) {
         // エディットボタンを押すと、inputActivityの方へと遷移する
-        // TODO: 遷移先をInputActivityでなく、UpdateActivityにする
         Intent intent = new Intent(context, UpdateActivity.class);
-        // インテントに遷移元の情報をもたせる
-        intent.putExtra("from", "RecyclerViewAdapter");
         // ID, タイトル、時間、コメント、追加日時
         intent.putExtra("id", String.valueOf(record.getId()));
         intent.putExtra("title", record.getRecordTitle());
@@ -172,5 +176,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         intent.putExtra("date", record.getDateRecordAdded());
 
         context.startActivity(intent);
+    }
+
+    public Record getRecordPosition(int position) {
+        return recordList.get(position);
     }
 }
