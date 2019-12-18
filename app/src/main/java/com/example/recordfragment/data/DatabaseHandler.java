@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -14,6 +13,7 @@ import com.example.recordfragment.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
@@ -41,6 +41,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + Constants.TABLE_NAME);
         onCreate(db);
     }
+
+    // ランダムデータの追加用
+    public void addRandomRecord(String title, String time, String comment, long date) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(Constants.KEY_TITLE, title);
+        values.put(Constants.KEY_TIME, time);
+        values.put(Constants.KEY_COMMENT, comment);
+        values.put(Constants.KEY_DATE_ADDED, date);
+
+        db.insert(Constants.TABLE_NAME, null, values);
+
+        db.close();
+    }
+
 
     // レコードの追加
     public void addRecord(Record record) {
@@ -121,4 +137,5 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         db.close();
     }
+
 }

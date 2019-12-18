@@ -10,6 +10,7 @@ public class Record {
     public Record() {
     }
 
+
     public int getId() {
         return id;
     }
