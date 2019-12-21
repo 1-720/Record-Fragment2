@@ -11,9 +11,10 @@ import androidx.annotation.Nullable;
 import com.example.recordfragment.model.Record;
 import com.example.recordfragment.util.Constants;
 
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
@@ -73,6 +74,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         db.close();
     }
+
 
     // 全てのレコードを取得する
     public List<Record> getAllRecords() {
@@ -137,5 +139,4 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         db.close();
     }
-
 }

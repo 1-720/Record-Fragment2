@@ -1,14 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GraphFragment">
+    android:padding="8dp"
+    tools:context=".GraphFragment"
+    android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+   <ScrollView
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/c1"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="match_parent">
 
-</FrameLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="日別"
+            android:textSize="16dp"
+            android:textAlignment="center"/>
+
+
+        <com.github.mikephil.charting.charts.BarChart
+            android:padding="8dp"
+            android:layout_marginVertical="16dp"
+            android:id="@+id/barChart"
+            android:layout_width="match_parent"
+            android:layout_height="250dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="累計"
+            android:textSize="16dp"
+            android:textAlignment="center"/>
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:padding="8dp"
+            android:layout_marginVertical="16dp"
+            android:id="@+id/lineChart"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="項目別"
+            android:textSize="16dp"
+            android:textAlignment="center"/>
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:padding="8dp"
+            android:layout_marginVertical="16dp"
+            android:id="@+id/pieChart"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"/>
+
+    </LinearLayout>
+
+
+   </ScrollView>
+
+
+
+</RelativeLayout>
