@@ -193,9 +193,12 @@ public class GraphFragment extends Fragment {
 
         for (int i = 0; i < days; i++) {
             String title = menu[random.nextInt(4)];
-            String time = String.valueOf(random.nextInt(300));
+            int time = random.nextInt(200);
+            if (time > 30) {
+                db.addRandomRecord(title, String.valueOf(time), "", date);
+            }
+
             date += oneDay;
-            db.addRandomRecord(title, time, "", date);
         }
     }
 }
