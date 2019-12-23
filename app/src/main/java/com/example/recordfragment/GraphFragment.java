@@ -29,9 +29,12 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -85,7 +88,7 @@ public class GraphFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         recordList = db.getAllRecords();
-        
+
         createLineChart();
 
         createBarChart();
@@ -93,6 +96,7 @@ public class GraphFragment extends Fragment {
         createPieChart();
     }
 
+    // パイチャート
     private void createPieChart() {
         pieChart.setUsePercentValues(true);
 
@@ -128,6 +132,7 @@ public class GraphFragment extends Fragment {
 
     }
 
+    // ラインチャート（累計）
     private void createLineChart() {
         lineChart.setDragEnabled(true);
         lineChart.setScaleEnabled(false);
@@ -159,6 +164,7 @@ public class GraphFragment extends Fragment {
 
     }
 
+    // バーチャート
     private void createBarChart() {
         barChart.setDrawBarShadow(false);
         barChart.setDrawValueAboveBar(true);
@@ -167,14 +173,42 @@ public class GraphFragment extends Fragment {
         barChart.setPinchZoom(false);
         barChart.setDrawGridBackground(true);
 
-        ArrayList<BarEntry> barEntries = new ArrayList<>();
+        // 始まりと終わりのレコードの追加日時(unix time)を取得
+        // TODO: 当日から遡って7日、とかの仕様にする。
+        long startRecord = Long.valueOf(recordList.get(recordList.size()-1).getDateRecordAdded());
+        long endRecord = Long.valueOf(recordList.get(0).getDateRecordAdded());
 
-        for (int i = 0; i < recordList.size(); i++) {
-            int time = Integer.parseInt(recordList.get(i).getRecordedTime());
-            barEntries.add(new BarEntry(i, time));
+
+        // 日付：0のhashmap
+        Map<String, Integer> map = new LinkedHashMap<>();
+
+        DateFormat dateFormat = DateFormat.getDateInstance();
+
+        while (true) {
+            String formattedDate = dateFormat.format(new Date(startRecord).getTime());
+            map.put(formattedDate, 0);
+            startRecord += 24 * 60 * 60 * 1000;
+            if (formattedDate.equals(dateFormat.format(new Date(endRecord).getTime()))) {
+                break;
+            }
         }
 
-        BarDataSet barDataSet = new BarDataSet(barEntries, "Time");
+        // mapにその日ごとの時間を格納する
+        for (int i = 0; i < recordList.size(); i++) {
+            String formattedDate = dateFormat.format(new Date(Long.valueOf(recordList.get(i).getDateRecordAdded())).getTime());
+            map.put(formattedDate, map.get(formattedDate) + Integer.parseInt(recordList.get(i).getRecordedTime()));
+        }
+
+
+        ArrayList<BarEntry> barEntries = new ArrayList<>();
+
+        List<Integer> list = new ArrayList<>(map.values());
+
+        for (int i = 0; i < list.size(); i++) {
+            barEntries.add(new BarEntry(i, list.get(i)));
+        }
+
+        BarDataSet barDataSet = new BarDataSet(barEntries.subList(barEntries.size()-7, barEntries.size()), "Time");
         barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
 
         BarData data = new BarData(barDataSet);
@@ -183,6 +217,9 @@ public class GraphFragment extends Fragment {
         barChart.setData(data);
     }
 
+
+
+    // ランダムデータを生成・格納
     public void generateRandom(int days) {
         Random random = new Random();
         String[] menu = {"Android", "JAVA", "Kotlin", "Python"};
