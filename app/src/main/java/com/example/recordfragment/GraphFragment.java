@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.text.DateFormat;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,6 +48,7 @@ public class GraphFragment extends Fragment {
     // 表示するチャート
     private BarChart barChart;
     private BarChart barChart30;
+    private BarChart barChartMonth;
     private LineChart lineChart;
     private PieChart pieChart;
 
@@ -86,6 +89,7 @@ public class GraphFragment extends Fragment {
         // 上記のviewの内部に、探す
         barChart = view.findViewById(R.id.barChart);
         barChart30 = view.findViewById(R.id.barChart30);
+        barChartMonth = view.findViewById(R.id.barChartMonth);
         lineChart = view.findViewById(R.id.lineChart);
         pieChart = view.findViewById(R.id.pieChart);
 
@@ -101,18 +105,22 @@ public class GraphFragment extends Fragment {
         recordList = db.getAllRecords();
 
         createHashMap();
+        createMonth();
 
         // 7日分
-        createBarChart(7, barChart, "#00838F");
+        createBarChart(7, barChart, "#00796B");
 
         // 30日分
-        createBarChart(30, barChart30, "0277BD");
+        createBarChart(30, barChart30, "1976D2");
 
         // Todo:月別
+        createMonthBarChart(barChartMonth);
 
         createLineChart();
 
         createPieChart();
+
+        createMonth();
     }
 
     // パイチャート
@@ -206,6 +214,32 @@ public class GraphFragment extends Fragment {
         barChart.setData(data);
     }
 
+    // 月別グラフ
+    private void createMonthBarChart(BarChart barChart) {
+        barChart.setDrawBarShadow(false);
+        barChart.setDrawValueAboveBar(true);
+
+        barChart.setMaxVisibleValueCount(30);
+        barChart.setPinchZoom(false);
+        barChart.setDrawGridBackground(false);
+
+        ArrayList<BarEntry> barEntries = new ArrayList<>();
+
+        List<Integer> list = new ArrayList<>(monthMap.values());
+
+        for (int i = 0; i < list.size(); i++) {
+            barEntries.add(new BarEntry(i, list.get(i)));
+        }
+
+        BarDataSet barDataSet = new BarDataSet(barEntries, "Time");
+        barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+
+        BarData data = new BarData(barDataSet);
+        data.setBarWidth(0.9f);
+
+        barChart.setData(data);
+    }
+
 
     // ランダムデータを生成・格納
     public void generateRandom(int days) {
@@ -248,5 +282,20 @@ public class GraphFragment extends Fragment {
             String formattedDate = dateFormat.format(new Date(Long.valueOf(recordList.get(i).getDateRecordAdded())).getTime());
             map.put(formattedDate, map.get(formattedDate) + Integer.parseInt(recordList.get(i).getRecordedTime()));
         }
+    }
+
+    public void createMonth() {
+        for (String k: map.keySet()) {
+            String month = k.substring(0,3) + k.substring(k.length()-4);
+            monthMap.put(month, 0);
+        }
+
+        for (Map.Entry<String, Integer> entry: map.entrySet()) {
+            String k = entry.getKey();
+            k = k.substring(0,3) + k.substring(k.length()-4);
+            monthMap.put(k, monthMap.get(k)+entry.getValue());
+        }
+
+        Log.d("ggg", "createMonth: " + monthMap.toString());
     }
 }
